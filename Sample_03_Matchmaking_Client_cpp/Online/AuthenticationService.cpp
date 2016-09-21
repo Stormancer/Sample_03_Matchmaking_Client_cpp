@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "AuthenticationService.h"
+#include "pplxScheduler.h"
 
 namespace Stormancer
 {
@@ -141,6 +142,7 @@ namespace Stormancer
 			}
 
 			getAuthenticationScene().then([this, authenticationContext, tce, result](pplx::task<Scene*> t) {
+				printf("%i\n", std::this_thread::get_id());
 				try
 				{
 					auto scene = t.get();
@@ -203,12 +205,14 @@ namespace Stormancer
 			_authenticationSceneRetrieving = true;
 			pplx::task_completion_event<Scene*> tce;
 			_client->getPublicScene(_authenticationSceneName.c_str()).then([tce](Result<Scene*>* result2) {
+				
 				if (result2->success())
 				{
 					auto scene = result2->get();
 					scene->connect().then([tce, scene](Result<>* result) {
 						if (result->success())
 						{
+							printf("%i\n", std::this_thread::get_id());
 							tce.set(scene);
 						}
 						else
@@ -224,7 +228,7 @@ namespace Stormancer
 				}
 				destroy(result2);
 			});
-			_authenticationScene = pplx::create_task(tce);
+			_authenticationScene = pplx::create_task(tce, pplx::task_options(std::make_shared<SameThreadScheduler>()));
 		}
 		return _authenticationScene;
 	}

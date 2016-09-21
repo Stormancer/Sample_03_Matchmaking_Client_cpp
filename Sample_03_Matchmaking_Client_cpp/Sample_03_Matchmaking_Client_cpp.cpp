@@ -21,13 +21,22 @@ int main()
 
 
 	auth->steamLogin("u1")
-		.then([auth](auto result) {
+		.then([auth](pplx::task<std::shared_ptr<Stormancer::Result<Stormancer::Scene*>>> result) {
 			try
 			{
-				result.get();
-				return auth->getPrivateScene("services");
+				printf("%i\n", std::this_thread::get_id());
+				auto v = result.get();
+				if (!v->success())
+				{
+					printf("an error occured while trying to authenticate with the server");
+					throw std::exception(v->reason());
+				}
+				else
+				{
+					return auth->getPrivateScene("services");
+				}
 			}
-			catch (const std::exception& ex)
+			catch (const std::exception& )
 			{
 				printf("an error occured while trying to authenticate with the server.");
 				throw;
@@ -36,16 +45,30 @@ int main()
 		.then([](pplx::task<Stormancer::Result<Stormancer::Scene*>*> result) {
 			try
 			{
+				printf("%i\n", std::this_thread::get_id());
 				auto service = result.get()->get();
+				Stormancer::destroy(result.get());
+				return service->connect();
 			}
-			catch(const std::exception& ex)
+			catch(const std::exception& )
 			{
 				printf("an error occured while trying to get the 'services' scene.");
 				throw;
 			}
+		})
+		.then([](pplx::task<Stormancer::Result<void>*> r) {
+		
+			if (r.get()->success())
+			{
+				printf("%i\n", std::this_thread::get_id());
+				printf("connected to services\n");
+			}
 		});
+
+		printf("%i\n",std::this_thread::get_id());
 	while (true)
 	{
+	
 		dispatcher->update(10);
 		Sleep(16);
 	}
