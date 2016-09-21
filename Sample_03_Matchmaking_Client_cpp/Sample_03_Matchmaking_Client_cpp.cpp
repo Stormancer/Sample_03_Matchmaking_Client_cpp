@@ -20,6 +20,7 @@ int main()
 	auto auth = client->dependencyResolver()->resolve<Stormancer::IAuthenticationService>();
 
 
+	auth->steamLogin("u1");
 	while (true)
 	{
 		dispatcher->update(10);
