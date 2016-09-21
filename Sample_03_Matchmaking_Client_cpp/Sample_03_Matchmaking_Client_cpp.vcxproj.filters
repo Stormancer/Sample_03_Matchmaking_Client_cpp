@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Online">
+      <UniqueIdentifier>{8d18a191-e02b-421a-be6d-222b157108c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -24,6 +27,33 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Online\AuthenticationPlugin.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="Online\AuthenticationService.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="Online\BugReportService.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="Online\GameSession.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="Online\GameVersionPlugin.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="Online\GameVersionService.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="Online\IAuthenticationService.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="Online\MatchmakingPlugin.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="Online\MatchMakingService.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -32,5 +62,32 @@
     <ClCompile Include="Sample_03_Matchmaking_Client_cpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Online\AuthenticationPlugin.cpp">
+      <Filter>Source Files\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Online\AuthenticationService.cpp">
+      <Filter>Source Files\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Online\BugReportService.cpp">
+      <Filter>Source Files\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Online\GameSession.cpp">
+      <Filter>Source Files\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Online\GameVersionPlugin.cpp">
+      <Filter>Source Files\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Online\GameVersionService.cpp">
+      <Filter>Source Files\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Online\MatchmakingPlugin.cpp">
+      <Filter>Source Files\Online</Filter>
+    </ClCompile>
+    <ClCompile Include="Online\MatchmakingService.cpp">
+      <Filter>Source Files\Online</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -88,6 +88,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -101,6 +102,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -116,6 +118,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +136,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,10 +149,27 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Online\AuthenticationPlugin.h" />
+    <ClInclude Include="Online\AuthenticationService.h" />
+    <ClInclude Include="Online\BugReportService.h" />
+    <ClInclude Include="Online\GameSession.h" />
+    <ClInclude Include="Online\GameVersionPlugin.h" />
+    <ClInclude Include="Online\GameVersionService.h" />
+    <ClInclude Include="Online\IAuthenticationService.h" />
+    <ClInclude Include="Online\MatchmakingPlugin.h" />
+    <ClInclude Include="Online\MatchMakingService.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Online\AuthenticationPlugin.cpp" />
+    <ClCompile Include="Online\AuthenticationService.cpp" />
+    <ClCompile Include="Online\BugReportService.cpp" />
+    <ClCompile Include="Online\GameSession.cpp" />
+    <ClCompile Include="Online\GameVersionPlugin.cpp" />
+    <ClCompile Include="Online\GameVersionService.cpp" />
+    <ClCompile Include="Online\MatchmakingPlugin.cpp" />
+    <ClCompile Include="Online\MatchmakingService.cpp" />
     <ClCompile Include="Sample_03_Matchmaking_Client_cpp.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -157,7 +178,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\StormancerClient.Native.140.1.0.1\build\native\StormancerClient.Native.140.targets" Condition="Exists('..\packages\StormancerClient.Native.140.1.0.1\build\native\StormancerClient.Native.140.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\StormancerClient.Native.140.1.0.1\build\native\StormancerClient.Native.140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\StormancerClient.Native.140.1.0.1\build\native\StormancerClient.Native.140.targets'))" />
+  </Target>
 </Project>
