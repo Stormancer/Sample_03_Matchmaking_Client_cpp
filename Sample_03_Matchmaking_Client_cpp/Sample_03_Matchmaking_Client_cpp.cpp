@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "Online\AuthenticationPlugin.h";
+#include "Online\AuthenticationPlugin.h"
 
 const std::string accountId = "dotemu-windjammers";
 const std::string application = "dev-server";
@@ -20,7 +20,30 @@ int main()
 	auto auth = client->dependencyResolver()->resolve<Stormancer::IAuthenticationService>();
 
 
-	auth->steamLogin("u1");
+	auth->steamLogin("u1")
+		.then([auth](auto result) {
+			try
+			{
+				result.get();
+				return auth->getPrivateScene("services");
+			}
+			catch (const std::exception& ex)
+			{
+				printf("an error occured while trying to authenticate with the server.");
+				throw;
+			}
+		})
+		.then([](pplx::task<Stormancer::Result<Stormancer::Scene*>*> result) {
+			try
+			{
+				auto service = result.get()->get();
+			}
+			catch(const std::exception& ex)
+			{
+				printf("an error occured while trying to get the 'services' scene.");
+				throw;
+			}
+		});
 	while (true)
 	{
 		dispatcher->update(10);
