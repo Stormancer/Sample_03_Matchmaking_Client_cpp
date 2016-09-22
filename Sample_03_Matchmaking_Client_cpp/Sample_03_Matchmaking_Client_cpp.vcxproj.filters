@@ -57,6 +57,12 @@
     <ClInclude Include="pplxScheduler.h">
       <Filter>Source Files\Online</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerProfilePlugin.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
+    <ClInclude Include="LeaderboardPlugin.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -92,8 +98,5 @@
     <ClCompile Include="pplxScheduler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

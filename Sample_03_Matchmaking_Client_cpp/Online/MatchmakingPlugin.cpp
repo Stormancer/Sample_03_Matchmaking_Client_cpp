@@ -13,20 +13,20 @@ namespace Stormancer
 
 			if (name && std::strlen(name) > 0 )
 			{
-				auto service = new MatchmakingService(scene);
+				auto service = std::make_shared<MatchmakingService>(scene);
 				scene->dependencyResolver()->registerDependency<MatchmakingService>(service);
 			}
 
 			name = scene->getHostMetadata("stormancer.gamesession");
 			if (name && std::strlen(name) > 0)
 			{
-				auto service = new GameSessionService(scene);
+				auto service = std::make_shared<GameSessionService>(scene);
 				scene->dependencyResolver()->registerDependency<GameSessionService>(service);
 			}
 			name = scene->getHostMetadata("stormancer.bugReporting");
 			if (name && std::strlen(name) > 0)
 			{
-				auto service = new BugReportService(scene);
+				auto service = std::make_shared<BugReportService>(scene);
 				scene->dependencyResolver()->registerDependency<BugReportService>(service);
 			}
 		}

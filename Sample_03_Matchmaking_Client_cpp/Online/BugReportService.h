@@ -46,6 +46,6 @@ namespace Stormancer
 
 	private:
 		Stormancer::Scene* _scene;
-		Stormancer::IRpcService* _rpc;
+		std::shared_ptr<Stormancer::IRpcService> _rpc;
 	};
 }

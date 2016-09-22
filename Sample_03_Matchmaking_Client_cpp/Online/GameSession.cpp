@@ -34,7 +34,7 @@ namespace Stormancer
 
 	}
 
-	pplx::task<std::shared_ptr<Result<GameServerInformations>>> GameSessionService::WaitServerReady(pplx::cancellation_token token)
+	pplx::task<std::shared_ptr<Result<GameServerInformations>>> GameSessionService::waitServerReady(pplx::cancellation_token token)
 	{
 		return pplx::create_task(_waitServerTce, pplx::task_options(token)).then([](pplx::task<GameServerInformations> t) {
 
@@ -65,6 +65,12 @@ namespace Stormancer
 	Action<>::TIterator GameSessionService::onConnectedPlayersChanged(std::function<void()> callback)
 	{
 		return this->_onConnectedPlayersChanged.push_back(callback);
+	}
+
+	pplx::task<std::shared_ptr<Result<void>>> GameSessionService::sendGameResults(GameResults results)
+	{
+		auto rpc = _scene->dependencyResolver()->resolve<IRpcService>();
+		return rpc->rpcVoid("gamesession.postresults", results);
 	}
 
 }

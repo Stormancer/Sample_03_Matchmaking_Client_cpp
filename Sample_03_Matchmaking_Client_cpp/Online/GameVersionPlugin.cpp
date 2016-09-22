@@ -13,7 +13,7 @@ namespace Stormancer
 
 			if (name && std::strlen(name) > 0)
 			{
-				auto service = new GameVersionService(scene);
+				auto service = std::make_shared<GameVersionService>(scene);
 				scene->dependencyResolver()->registerDependency<GameVersionService>(service);
 			}
 		}

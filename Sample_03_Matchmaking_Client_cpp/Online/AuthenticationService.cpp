@@ -142,7 +142,7 @@ namespace Stormancer
 			}
 
 			getAuthenticationScene().then([this, authenticationContext, tce, result](pplx::task<Scene*> t) {
-				printf("%i\n", std::this_thread::get_id());
+				
 				try
 				{
 					auto scene = t.get();
@@ -195,7 +195,7 @@ namespace Stormancer
 			result->setError(1, ex.what());
 			tce.set(result);
 		}
-		return pplx::create_task(tce);
+		return pplx::create_task(tce,this->_client->dependencyResolver()->resolve<IActionDispatcher>());
 	}
 
 	pplx::task<Scene*> AuthenticationService::getAuthenticationScene()
@@ -212,7 +212,7 @@ namespace Stormancer
 					scene->connect().then([tce, scene](Result<>* result) {
 						if (result->success())
 						{
-							printf("%i\n", std::this_thread::get_id());
+							
 							tce.set(scene);
 						}
 						else
@@ -228,7 +228,7 @@ namespace Stormancer
 				}
 				destroy(result2);
 			});
-			_authenticationScene = pplx::create_task(tce, pplx::task_options(std::make_shared<SameThreadScheduler>()));
+			_authenticationScene = pplx::create_task(tce);
 		}
 		return _authenticationScene;
 	}

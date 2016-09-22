@@ -118,7 +118,7 @@ namespace Stormancer
 
 	private:
 		Stormancer::Scene* _scene = nullptr;
-		Stormancer::IRpcService* _rpcService = nullptr;
+		std::shared_ptr<Stormancer::IRpcService> _rpcService = nullptr;
 		bool _isMatching = false;
 		std::weak_ptr<Stormancer::ISubscription> _matchmakingSubscription;
 		std::function<void(MatchState)> _onMatchUpdate;
