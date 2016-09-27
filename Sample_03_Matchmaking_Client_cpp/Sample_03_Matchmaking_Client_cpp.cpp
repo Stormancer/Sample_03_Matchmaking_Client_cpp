@@ -3,24 +3,28 @@
 
 #include "stdafx.h"
 #include "Online\AuthenticationPlugin.h"
+#include "Online\MatchMakingPlugin.h"
 
-const std::string accountId = "dotemu-windjammers";
-const std::string application = "dev-server";
+const std::string accountId = "ad912dff-cec9-0fb6-78f8-652d4c093508";
+const std::string application = "03-matchmaking";
 const std::string endpoint = "http://api.stormancer.com";
 
+Stormancer::Client* client;
+std::unordered_map<std::string, pplx::task<Stormancer::Scene*>> scenes;
 
-pplx::task<Stormancer::Scene*> ConnectToServices(Stormancer::Client* client, std::string steamToken)
+
+pplx::task<Stormancer::Scene*> ConnectToServices(std::string steamToken)
 {
-	
+
 
 	auto auth = client->dependencyResolver()->resolve<Stormancer::IAuthenticationService>();
 
 
-	return auth->steamLogin("u1")
+	return auth->steamLogin(steamToken)
 		.then([auth](pplx::task<std::shared_ptr<Stormancer::Result<Stormancer::Scene*>>> result) {
 		try
 		{
-			
+
 			auto v = result.get();
 			if (!v->success())
 			{
@@ -38,13 +42,17 @@ pplx::task<Stormancer::Scene*> ConnectToServices(Stormancer::Client* client, std
 			throw;
 		}
 	})
-		.then([](pplx::task<Stormancer::Result<Stormancer::Scene*>*> result) {
+		.then([auth](pplx::task<Stormancer::Result<Stormancer::Scene*>*> result) {
 		try
 		{
 			printf("%i\n", std::this_thread::get_id());
 			auto service = result.get()->get();
 			Stormancer::destroy(result.get());
-			return service->connect().then([service](pplx::task<Stormancer::Result<void>*> t) {return service; });
+			printf((std::string("Authenticated as") + auth->userId() + "\n").c_str());
+			pplx::task<Stormancer::Scene*> t = service->connect().then([service,auth](pplx::task<Stormancer::Result<void>*> t) {
+				
+				return service; });
+			return t;
 		}
 		catch (const std::exception&)
 		{
@@ -54,19 +62,111 @@ pplx::task<Stormancer::Scene*> ConnectToServices(Stormancer::Client* client, std
 	});
 }
 
-int main()
+template<typename T>
+pplx::task<std::shared_ptr<T>> GetService(const std::string sceneId)
 {
-	
+	pplx::task_completion_event<std::shared_ptr<T>> tce;
+	auto it = scenes.find(sceneId);
+	if (it != scenes.end())
+	{
+		return it->second.then([](pplx::task<Stormancer::Scene*> t) {
+
+			return t.get()->dependencyResolver()->resolve<T>();
+
+		});
+	}
+	else
+	{
+		auto auth = client->dependencyResolver()->resolve<Stormancer::IAuthenticationService>();
+		if (auth->connectionState() != Stormancer::GameConnectionState::Authenticated)
+		{
+			tce.set_exception(std::runtime_error("Client not connected to the server."));
+		}
+		else
+		{
+			pplx::task<Stormancer::Scene*> resultTask = auth->getPrivateScene(sceneId).then([tce, sceneId](pplx::task<Stormancer::Result<Stormancer::Scene*>*> t) {
+
+
+				Stormancer::Result<Stormancer::Scene*>* result = t.get();
+
+				if (result->success())
+				{
+					auto r= result->get();
+					delete result;
+					return r->connect().then([r](auto t1) {return r; });
+				}
+				else
+				{
+					auto reason = std::string(result->reason());
+					delete result;
+					scenes.erase(sceneId);
+					throw std::runtime_error("Failed to connect to scene : " + reason);
+				}
+
+			});
+			scenes[sceneId] = resultTask;
+			return resultTask.then([](pplx::task<Stormancer::Scene*> t) {
+
+				return t.get()->dependencyResolver()->resolve<T>();
+
+			});
+		}
+	}
+
+
+
+	return pplx::create_task(tce, pplx::task_options(client->dependencyResolver()->resolve<Stormancer::IActionDispatcher>()));
+}
+
+int main(int argc, char *argv[])
+{
+
 	auto config = Stormancer::Configuration::create(endpoint, accountId, application);
 	auto d1 = std::make_shared<Stormancer::MainThreadActionDispatcher>();
 	config->actionDispatcher = d1;
 
 	config->addPlugin(new Stormancer::AuthenticationPlugin());
-	auto client = Stormancer::Client::createClient(config);
+	config->addPlugin(new Stormancer::MatchmakingPlugin());
+	client = Stormancer::Client::createClient(config);
 
 	
-	
-	ConnectToServices(client, "u1");
+	auto ticket = argv[1];
+
+	ConnectToServices(ticket )
+		.then([](pplx::task<Stormancer::Scene*> t)
+	{
+		return GetService<Stormancer::MatchmakingService>("matchmaking-fast");
+	})
+		.then([](pplx::task<std::shared_ptr<Stormancer::MatchmakingService>> t)
+	{
+
+		auto matchmaking = t.get();
+		auto rq = Stormancer::MatchmakingRequest();
+		rq.gameMode = "test";
+		matchmaking->onMatchFound([](Stormancer::MatchmakingResponse match) {
+			printf("Match found!\n");
+		});
+		matchmaking->onMatchParametersUpdate([](Stormancer::MatchmakingRequest params) {
+			printf(("received matchmaking params : "+params.gameMode+"\n").c_str());
+		});
+		matchmaking->onMatchUpdate([](Stormancer::MatchState state) {
+			switch (state)
+			{
+			case Stormancer::MatchState::SearchStart:
+				printf("search started\n");
+				break;
+			case Stormancer::MatchState::CandidateFound:
+				printf("candidate found\n");
+				break;
+			default:
+				break;
+			}
+		});
+		printf("%i\n", std::this_thread::get_id());
+		auto task = matchmaking->findMatch("matchmaking-sample", rq);
+		printf("starting matchmaking\n");
+		return task;
+	});
 
 	printf("%i\n", std::this_thread::get_id());
 

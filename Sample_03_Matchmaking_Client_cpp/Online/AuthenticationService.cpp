@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "AuthenticationService.h"
-#include "pplxScheduler.h"
-
 namespace Stormancer
 {
 	LoginResult::LoginResult(Stormancer::bytestream* stream)

@@ -43,9 +43,9 @@ namespace Stormancer
 	struct MatchmakingRequest
 	{
 	public:
-		std::map<std::string, std::string> profileIds;
+		std::string gameMode;
 
-		MSGPACK_DEFINE(profileIds);
+		MSGPACK_DEFINE(gameMode);
 	};
 
 	struct MatchmakingResponse
@@ -55,6 +55,9 @@ namespace Stormancer
 		std::vector<Player> team1;
 		std::vector<Player> team2;
 		std::vector<std::string> optionalParameters;
+
+		MSGPACK_DEFINE(gameId,team1,team2, optionalParameters);
+
 	};
 
 	struct ReadyVerificationRequest
@@ -110,7 +113,54 @@ namespace Stormancer
 
 		MatchState matchState() const;
 
-		pplx::task<std::shared_ptr<Stormancer::Result<>>> findMatch(std::string provider, std::map<std::string, std::string> profileIds);
+		template<typename T>
+		pplx::task<std::shared_ptr<Stormancer::Result<>>> findMatch(std::string provider, T requestParams)
+		{
+			pplx::task_completion_event<std::shared_ptr<Stormancer::Result<>>> tce;
+
+			_isMatching = true;
+
+			
+
+			auto observable = _rpcService->rpc("match.find", [provider, requestParams](Stormancer::bytestream* stream) {
+				msgpack::pack(stream, provider);
+				msgpack::pack(stream, requestParams);
+			}, PacketPriority::MEDIUM_PRIORITY);
+
+			auto onNext = [this, tce](Stormancer::Packetisp_ptr packet) {
+				_isMatching = false;
+				auto sub = _matchmakingSubscription.lock();
+				if (sub)
+				{
+					sub->unsubscribe();
+				}
+				std::shared_ptr<Stormancer::Result<>> res(new Stormancer::Result<>());
+				//auto res = new std::shared_ptr<Stormancer::Result<>*>();
+				res->set();
+				tce.set(res);
+			};
+
+			auto onError = [this, tce](const char* error) {
+				_isMatching = false;
+				auto sub = _matchmakingSubscription.lock();
+				if (sub)
+				{
+					sub->unsubscribe();
+				}
+
+				std::shared_ptr<Stormancer::Result<>> res(new Stormancer::Result<>());
+				//auto res = new std::shared_ptr<Stormancer::Result<>*>();
+				res->setError(1, error);
+				tce.set(res);
+			};
+
+			auto onComplete = []() {
+			};
+
+			_matchmakingSubscription = observable->subscribe(onNext, onError, onComplete);
+
+			return pplx::create_task(tce);
+		}
 
 		void resolve(bool acceptMatch);
 

@@ -95,8 +95,8 @@
     <ClCompile Include="Online\MatchmakingService.cpp">
       <Filter>Source Files\Online</Filter>
     </ClCompile>
-    <ClCompile Include="pplxScheduler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
