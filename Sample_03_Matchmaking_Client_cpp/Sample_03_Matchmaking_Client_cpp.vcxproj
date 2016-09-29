@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LeaderboardPlugin.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="Online\AuthenticationPlugin.h" />
     <ClInclude Include="Online\AuthenticationService.h" />
     <ClInclude Include="Online\BugReportService.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Online\AuthenticationPlugin.cpp" />
     <ClCompile Include="Online\AuthenticationService.cpp" />
     <ClCompile Include="Online\BugReportService.cpp" />

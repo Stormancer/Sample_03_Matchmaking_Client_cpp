@@ -4,9 +4,10 @@
 #include "stdafx.h"
 #include "Online\AuthenticationPlugin.h"
 #include "Online\MatchMakingPlugin.h"
+#include "Logger.h"
 
-const std::string accountId = "ad912dff-cec9-0fb6-78f8-652d4c093508";
-const std::string application = "03-matchmaking";
+const std::string accountId = "-dont-nod11-battlecrew";
+const std::string application = "dev-server";
 const std::string endpoint = "http://api.stormancer.com";
 
 Stormancer::Client* client;
@@ -51,7 +52,8 @@ pplx::task<Stormancer::Scene*> ConnectToServices(std::string steamToken)
 			printf((std::string("Authenticated as") + auth->userId() + "\n").c_str());
 			pplx::task<Stormancer::Scene*> t = service->connect().then([service,auth](pplx::task<Stormancer::Result<void>*> t) {
 				
-				return service; });
+				return service;
+			});
 			return t;
 		}
 		catch (const std::exception&)
@@ -120,9 +122,9 @@ pplx::task<std::shared_ptr<T>> GetService(const std::string sceneId)
 
 int main(int argc, char *argv[])
 {
-
+	Stormancer::ILogger::instance(std::make_shared<Stormancer::Logger>());
 	auto config = Stormancer::Configuration::create(endpoint, accountId, application);
-	auto d1 = std::make_shared<Stormancer::MainThreadActionDispatcher>();
+	auto d1 = std::make_shared<Stormancer::SameThreadActionDispatcher>();
 	config->actionDispatcher = d1;
 
 	config->addPlugin(new Stormancer::AuthenticationPlugin());
@@ -131,18 +133,20 @@ int main(int argc, char *argv[])
 
 	
 	auto ticket = argv[1];
+	auto gameMode = argv[2];
 
 	ConnectToServices(ticket )
 		.then([](pplx::task<Stormancer::Scene*> t)
 	{
 		return GetService<Stormancer::MatchmakingService>("matchmaking-fast");
 	})
-		.then([](pplx::task<std::shared_ptr<Stormancer::MatchmakingService>> t)
+		.then([=](pplx::task<std::shared_ptr<Stormancer::MatchmakingService>> t)
 	{
 
 		auto matchmaking = t.get();
 		auto rq = Stormancer::MatchmakingRequest();
-		rq.gameMode = "test";
+		rq.gameMode = gameMode;
+		rq.ranking = 50;
 		matchmaking->onMatchFound([](Stormancer::MatchmakingResponse match) {
 			printf("Match found!\n");
 		});
@@ -158,12 +162,14 @@ int main(int argc, char *argv[])
 			case Stormancer::MatchState::CandidateFound:
 				printf("candidate found\n");
 				break;
+			case Stormancer::MatchState::Canceled:
+				printf("match find cancelled\n");
 			default:
 				break;
 			}
 		});
 		printf("%i\n", std::this_thread::get_id());
-		auto task = matchmaking->findMatch("matchmaking-sample", rq);
+		auto task = matchmaking->findMatch("Battlecrew", rq);
 		printf("starting matchmaking\n");
 		return task;
 	});
@@ -176,7 +182,7 @@ int main(int argc, char *argv[])
 	{
 
 		//Give at most 5ms to the dispatcher to execute pending tasks
-		d1->update(std::chrono::milliseconds(5));
+		//d1->update(std::chrono::milliseconds(5));
 		//d2->update(std::chrono::milliseconds(5));
 		//Sleep for 10ms (for demo)
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));

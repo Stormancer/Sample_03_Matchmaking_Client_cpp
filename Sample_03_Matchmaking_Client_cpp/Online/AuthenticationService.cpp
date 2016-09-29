@@ -107,13 +107,13 @@ namespace Stormancer
 					{
 						result->setError(1, loginResult.errorMsg.c_str());
 						tce.set(result);
-						ILogger::instance()->log(LogLevel::Error, "AuthenticationService", "An error occured while creating an account.", loginResult.errorMsg.c_str());
+						ILogger::instance()->log(LogLevel::Error, "AuthenticationService", "An error occured while creating an account :"+loginResult.errorMsg);
 					}
 				};
 				auto onError = std::function<void(const char*)>([tce, result](const char* error) {
 					result->setError(1, error);
 					tce.set(result);
-					ILogger::instance()->log(LogLevel::Error, "AuthenticationService", "An error occured while creating an account. : ", error);
+					ILogger::instance()->log(LogLevel::Error, "AuthenticationService", "An error occured while creating an account. : "+std::string(error));
 				});
 				auto onComplete = []() {
 				};
@@ -169,13 +169,13 @@ namespace Stormancer
 							this->setConnectionState(GameConnectionState::Disconnected);
 							result->setError(1, loginResult.errorMsg.c_str());
 							tce.set(result);
-							ILogger::instance()->log(LogLevel::Error, "AuthenticationService", "An error occured while trying to connect to the redirected scene.", loginResult.errorMsg.c_str());
+							ILogger::instance()->log(LogLevel::Error, "AuthenticationService", "An error occured while trying to connect to the redirected scene : " +loginResult.errorMsg);
 						}
 					};
 					auto onError = std::function<void(const char*)>([tce, result](const char* error) {
 						result->setError(1, error);
 						tce.set(result);
-						ILogger::instance()->log(LogLevel::Error, "AuthenticationService", "An error occured while authenticating the user : ", error);
+						ILogger::instance()->log(LogLevel::Error, "AuthenticationService", "An error occured while authenticating the user : "+std::string(error));
 					});
 					auto onComplete = []() {
 					};

@@ -33,19 +33,22 @@ namespace Stormancer
 	struct Player
 	{
 	public:
-		
+
 		std::string playerId;
 		std::string pseudo;
+		std::string platformId;
+		std::string platform;
 
-		MSGPACK_DEFINE(playerId, pseudo);
+		MSGPACK_DEFINE(playerId, pseudo, platformId, platform);
 	};
 
 	struct MatchmakingRequest
 	{
 	public:
 		std::string gameMode;
+		int ranking;
 
-		MSGPACK_DEFINE(gameMode);
+		MSGPACK_DEFINE(gameMode, ranking);
 	};
 
 	struct MatchmakingResponse
@@ -56,7 +59,7 @@ namespace Stormancer
 		std::vector<Player> team2;
 		std::vector<std::string> optionalParameters;
 
-		MSGPACK_DEFINE(gameId,team1,team2, optionalParameters);
+		MSGPACK_DEFINE(gameId, team1, team2, optionalParameters);
 
 	};
 
@@ -77,12 +80,13 @@ namespace Stormancer
 		{
 		public:
 			std::string gameId;
+			std::string hostPlatformId;
 			std::vector<Player> team1;
 			std::vector<Player> team2;
 			std::vector<std::string> optionalParameters;
-			
 
-			MSGPACK_DEFINE(gameId, team1, team2, optionalParameters);
+
+			MSGPACK_DEFINE(gameId, hostPlatformId, team1, team2, optionalParameters);
 		};
 
 		struct ReadyVerificationRequest
@@ -120,7 +124,7 @@ namespace Stormancer
 
 			_isMatching = true;
 
-			
+
 
 			auto observable = _rpcService->rpc("match.find", [provider, requestParams](Stormancer::bytestream* stream) {
 				msgpack::pack(stream, provider);
