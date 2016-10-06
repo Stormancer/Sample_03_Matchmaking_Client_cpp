@@ -10,6 +10,10 @@ const std::string accountId = "-dont-nod11-battlecrew";
 const std::string application = "dev-server";
 const std::string endpoint = "http://api.stormancer.com";
 
+//const std::string accountId = "test";
+//const std::string application = "test";
+//const std::string endpoint = "http://localhost:8081";
+
 Stormancer::Client* client;
 std::unordered_map<std::string, pplx::task<Stormancer::Scene*>> scenes;
 

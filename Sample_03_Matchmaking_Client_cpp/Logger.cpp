@@ -1,18 +1,18 @@
 #include "stdafx.h"
 #include "Logger.h"
 
-void Stormancer::Logger::log(const std::string message)
+void Stormancer::Logger::log(const char* message)
 {
-	printf(message.c_str());
+	printf(message);
 	printf("\n");
 }
 
-void Stormancer::Logger::log(LogLevel level, const std::string category, const std::string message)
+void Stormancer::Logger::log(LogLevel level, const char* category, const char* message, const char* data)
 {
-	log(ILogger::format(level,category,message));
+	log(ILogger::format(level,category,message,data).get());
 }
 
 void Stormancer::Logger::log(const std::exception & e)
 {
-	log(LogLevel::Error, "exception", e.what());
+	log(LogLevel::Error, "exception", e.what(),"");
 }
