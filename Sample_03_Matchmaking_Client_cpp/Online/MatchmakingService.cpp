@@ -89,7 +89,7 @@ namespace Stormancer
 			ReadyVerificationRequest readyUpdate2;
 			readyUpdate2.matchId = readyUpdate.matchId;
 			readyUpdate2.timeout = readyUpdate.timeout;
-			readyUpdate2.membersCountTotal = readyUpdate2.members.size();
+			readyUpdate2.membersCountTotal = static_cast<Stormancer::int32>(readyUpdate2.members.size());
 			readyUpdate2.membersCountReady = 0;
 			for (auto it : readyUpdate2.members)
 			{
@@ -141,56 +141,7 @@ namespace Stormancer
 		return _matchState;
 	}
 
-	pplx::task<std::shared_ptr<Stormancer::Result<>>> MatchmakingService::findMatch(std::string provider, std::map<std::string, std::string> profileIds)
-	{
-		pplx::task_completion_event<std::shared_ptr<Stormancer::Result<>>> tce;
-
-		_isMatching = true;
-
-		MatchmakingRequest mmreq;
-		mmreq.profileIds = profileIds;
-
-
-		auto observable = _rpcService->rpc("match.find", [provider, mmreq](Stormancer::bytestream* stream) {
-			msgpack::pack(stream, provider);
-			msgpack::pack(stream, mmreq);
-		}, PacketPriority::MEDIUM_PRIORITY);
-
-		auto onNext = [this, tce](Stormancer::Packetisp_ptr packet) {
-			_isMatching = false;
-			auto sub = _matchmakingSubscription.lock();
-			if (sub)
-			{
-				sub->unsubscribe();
-			}
-			std::shared_ptr<Stormancer::Result<>> res(new Stormancer::Result<>());
-			//auto res = new std::shared_ptr<Stormancer::Result<>*>();
-			res->set();
-			tce.set(res);
-		};
-
-		auto onError = [this, tce](const char* error) {
-			_isMatching = false;
-			auto sub = _matchmakingSubscription.lock();
-			if (sub)
-			{
-				sub->unsubscribe();
-			}
-
-			std::shared_ptr<Stormancer::Result<>> res(new Stormancer::Result<>());
-			//auto res = new std::shared_ptr<Stormancer::Result<>*>();
-			res->setError(1, error);
-			tce.set(res);
-		};
-
-		auto onComplete = []() {
-		};
-
-		_matchmakingSubscription = observable->subscribe(onNext, onError, onComplete);
-
-		return pplx::create_task(tce);
-	}
-
+	
 	void MatchmakingService::resolve(bool acceptMatch)
 	{
 		_scene->sendPacket("match.ready.resolve", [acceptMatch](Stormancer::bytestream* stream) {

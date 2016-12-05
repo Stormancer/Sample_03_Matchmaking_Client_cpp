@@ -60,6 +60,9 @@
     <ClInclude Include="Online\PlayerProfilePlugin.h">
       <Filter>Source Files\Online</Filter>
     </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Source Files\Online</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -92,5 +95,11 @@
     <ClCompile Include="Online\MatchmakingService.cpp">
       <Filter>Source Files\Online</Filter>
     </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files\Online</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
