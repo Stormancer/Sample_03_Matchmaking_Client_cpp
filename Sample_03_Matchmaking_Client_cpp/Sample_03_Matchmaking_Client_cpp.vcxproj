@@ -153,7 +153,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LeaderboardPlugin.h" />
     <ClInclude Include="Online\AuthenticationPlugin.h" />
     <ClInclude Include="Online\AuthenticationService.h" />
     <ClInclude Include="Online\BugReportService.h" />
@@ -161,10 +160,10 @@
     <ClInclude Include="Online\GameVersionPlugin.h" />
     <ClInclude Include="Online\GameVersionService.h" />
     <ClInclude Include="Online\IAuthenticationService.h" />
+    <ClInclude Include="Online\LeaderboardPlugin.h" />
     <ClInclude Include="Online\MatchmakingPlugin.h" />
     <ClInclude Include="Online\MatchMakingService.h" />
-    <ClInclude Include="PlayerProfilePlugin.h" />
-    <ClInclude Include="pplxScheduler.h" />
+    <ClInclude Include="Online\PlayerProfilePlugin.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -177,7 +176,6 @@
     <ClCompile Include="Online\GameVersionService.cpp" />
     <ClCompile Include="Online\MatchmakingPlugin.cpp" />
     <ClCompile Include="Online\MatchmakingService.cpp" />
-    <ClCompile Include="pplxScheduler.cpp" />
     <ClCompile Include="Sample_03_Matchmaking_Client_cpp.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -54,13 +54,10 @@
     <ClInclude Include="Online\MatchMakingService.h">
       <Filter>Source Files\Online</Filter>
     </ClInclude>
-    <ClInclude Include="pplxScheduler.h">
+    <ClInclude Include="Online\LeaderboardPlugin.h">
       <Filter>Source Files\Online</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerProfilePlugin.h">
-      <Filter>Source Files\Online</Filter>
-    </ClInclude>
-    <ClInclude Include="LeaderboardPlugin.h">
+    <ClInclude Include="Online\PlayerProfilePlugin.h">
       <Filter>Source Files\Online</Filter>
     </ClInclude>
   </ItemGroup>
@@ -94,9 +91,6 @@
     </ClCompile>
     <ClCompile Include="Online\MatchmakingService.cpp">
       <Filter>Source Files\Online</Filter>
-    </ClCompile>
-    <ClCompile Include="pplxScheduler.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
